@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>زیورا | ZIVORA</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#07111f;color:#eaf2ff}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+#intro{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+background:radial-gradient(circle at 50% 30%,#163a67,#07111f 65%);text-align:center}
+.card{background:#0d1b2e;border:1px solid #244563;border-radius:24px;padding:40px;box-shadow:0 25px 80px #0008;max-width:600px;width:92%}
+.logo{font-size:58px;font-weight:900;letter-spacing:4px;color:#65d8ff}.sub{color:#9eb5ca;margin:12px 0 28px}
+.creator{font-size:20px;margin:8px;color:#fff}.enter{margin-top:25px;background:#21b7e8;color:#03101c;padding:13px 30px;border-radius:12px;font-weight:bold}
+#app{display:none;height:100vh;overflow:hidden}.top{height:64px;background:#0c192b;border-bottom:1px solid #203a54;display:flex;align-items:center;gap:10px;padding:0 14px}
+.brand{font-size:24px;font-weight:900;color:#61d9ff;margin-left:12px}.top button,.tool{background:#12283e;color:#d9ecff;padding:9px 13px;border-radius:9px}
+.top button:hover,.tool:hover{background:#1b3b58}
+.navbtn{background:#17314a!important;color:#dff5ff!important}
+.navbtn:hover{background:#21b7e8!important;color:#04121c!important}
+
+.resistorVisual{margin:12px 0;background:#071522;border:1px solid #24445d;border-radius:12px;padding:14px;text-align:center}
+.resBody{height:58px;width:min(92%,430px);margin:auto;border-radius:30px;background:#d9b47a;position:relative;display:flex;justify-content:center;gap:0;overflow:hidden;box-shadow:inset 0 0 0 1px #b88f56}
+.band{width:30px;height:100%;margin:0 10px}
+.band:first-child{margin-right:18px}.band:last-child{margin-left:18px}
+.resLead{height:4px;background:#bfc7cc;width:55px;display:inline-block;vertical-align:middle}
+.calcResult{margin-top:10px;padding:12px;background:#07111d;border-right:4px solid #28c8e8;border-radius:10px}
+.hub{position:fixed;inset:0;z-index:30;background:#020913cc;display:flex;align-items:center;justify-content:center;padding:18px}
+.hub.hidden{display:none}.hubbox{position:relative;width:min(760px,96vw);max-height:88vh;overflow:auto;background:#0d1b2e;border:1px solid #2a506c;border-radius:20px;padding:22px;box-shadow:0 30px 100px #000b}
+.closehub{position:absolute;left:15px;top:10px;background:#17314a;color:#fff;border-radius:50%;width:36px;height:36px;font-size:25px}
+.hub h2{color:#61d9ff;margin-top:0}.hubgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hubcard{background:#10243a;border:1px solid #244963;border-radius:12px;padding:13px;line-height:1.9}
+.hubcard b{color:#75defe}.formula{direction:ltr;text-align:center;background:#071522;border-radius:9px;padding:12px;margin-top:8px;font-size:18px}
+@media(max-width:700px){.hubgrid{grid-template-columns:1fr}.top{overflow-x:auto}.navbtn{white-space:nowrap}}
+.spacer{flex:1}.badge{font-size:12px;color:#7fdcff}
+.layout{height:calc(100vh - 64px);display:grid;grid-template-columns:250px 1fr 290px;gap:10px;padding:10px}
+.panel,.canvasWrap{background:#0b1727;border:1px solid #1d3650;border-radius:14px;overflow:hidden}.panel{padding:12px;overflow:auto}
+h3{font-size:15px;margin:7px 0 10px;color:#77dcff}.group{margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.comp{background:#10243a;border:1px solid #234661;color:#e8f6ff;border-radius:9px;padding:9px;text-align:center}
+.comp:hover{border-color:#43c9f4}.small{font-size:11px;color:#90a8bc}.canvasWrap{position:relative;display:flex;flex-direction:column}
+.toolbar{height:46px;border-bottom:1px solid #1d3650;display:flex;align-items:center;gap:7px;padding:6px 8px;background:#0e1c2e}
+.mode{background:#17314a;color:#cde8f7;padding:7px 13px;border-radius:8px}.mode.active{background:#21b7e8;color:#04121c}
+#stage{position:relative;flex:1;background:#081421}.view{position:absolute;inset:0}.hidden{display:none}
+#svg2d{width:100%;height:100%;background-image:linear-gradient(#17304a 1px,transparent 1px),linear-gradient(90deg,#17304a 1px,transparent 1px);background-size:25px 25px}
+#three{width:100%;height:100%}
+.info{background:#0d2033;border:1px solid #21445e;border-radius:10px;padding:10px;margin-bottom:10px}
+label{display:block;font-size:12px;color:#91abc0;margin:7px 0 4px}input,select{width:100%;background:#071522;border:1px solid #2a4c66;color:#eaf5ff;border-radius:7px;padding:8px}
+.calc button,.save{width:100%;margin-top:8px;background:#1a9fd0;color:white;padding:9px;border-radius:8px}
+.result{font-size:13px;line-height:1.8;color:#bcecff}
+.status{position:absolute;bottom:8px;right:10px;background:#071522dd;padding:7px 10px;border-radius:7px;font-size:11px;color:#91b8ce}
+.wire{stroke:#58dcff;stroke-width:3;fill:none}.node{fill:#b9f3ff;stroke:#071522;stroke-width:2}
+.compbody{fill:#e6c37a;stroke:#1b1b1b;stroke-width:2}.text{fill:#dff6ff;font:12px Arial}
+@media(max-width:950px){.layout{grid-template-columns:190px 1fr}.panel.right{display:none}}
+</style>
+</head>
+<body>
+<div id="intro">
+ <div class="card">
+  <div class="logo">ZIVORA</div>
+  <div class="sub">محیط مهندسی طراحی و شبیه‌سازی مدارهای الکتریکی و الکترونیکی</div>
+  <div class="creator">سازندگان</div>
+  <div class="creator">سهیل هیبتیان</div>
+  <div class="creator">امیر حسین احسانی</div>
+  <button class="enter" onclick="enterApp()">ورود به زیورا</button>
+ </div>
+</div>
+
+<div id="app">
+<div id="hub" class="hub hidden">
+ <div class="hubbox">
+  <button class="closehub" onclick="closeHub()">×</button>
+  <div id="hubContent"></div>
+ </div>
+</div>
+<header class="top">
+ <div class="brand">زیورا</div>
+ <button onclick="runSim()">▶ Run / Simulation</button>
+ <button onclick="saveProject()">💾 ذخیره</button>
+ <button onclick="loadProject()">📂 بازکردن</button>
+ <button onclick="clearStage()">پاک‌کردن</button>
+ <button class="navbtn" onclick="openHub('calc')">🧮 محاسبات</button>
+ <button class="navbtn" onclick="openHub('parts')">📚 مرجع قطعات</button>
+ <button class="navbtn" onclick="openHub('learn')">🎓 آموزش تعاملی</button>
+ <div class="spacer"></div><span class="badge">Engineering Circuit Studio</span>
+</header>
+<div class="layout">
+<aside class="panel">
+ <div class="group"><h3>قطعات</h3>
+  <div class="grid">
+   <button class="comp" onclick="addComp('R')">Ω مقاومت<br><span class=small>R</span></button>
+   <button class="comp" onclick="addComp('C')">◫ خازن<br><span class=small>C</span></button>
+   <button class="comp" onclick="addComp('L')">◌ سلف<br><span class=small>L</span></button>
+   <button class="comp" onclick="addComp('D')">▷| دیود<br><span class=small>D</span></button>
+   <button class="comp" onclick="addComp('T')">▱ ترانس<br><span class=small>Transformer</span></button>
+   <button class="comp" onclick="addComp('K')">▣ رله<br><span class=small>Relay</span></button>
+   <button class="comp" onclick="addComp('V')">⎓ منبع DC<br><span class=small>V</span></button>
+   <button class="comp" onclick="addComp('G')">⏚ زمین<br><span class=small>GND</span></button>
+  </div>
+ </div>
+ <div class="group"><h3>ابزار</h3>
+  <button class="tool" onclick="wireMode()">🔗 سیم‌کشی</button>
+  <button class="tool" onclick="rotateSelected()">↻ چرخش قطعه</button>
+  <button class="tool" onclick="deleteSelected()">✕ حذف قطعه</button>
+ </div>
+ <div class="group"><h3>دستیار هوش مصنوعی</h3>
+  <div class="info small">دستیار آموزشی زیورا می‌تواند قانون اهم، توان، سری/موازی و اصول قطعات را توضیح دهد. برای تحلیل دقیق مدارهای پیچیده باید موتور شبیه‌سازی معتبر به پروژه متصل شود.</div>
+  <input id="aiQ" placeholder="مثلاً قانون اهم چیست؟">
+  <button class="calc" onclick="askAI()">پرسش از زیورا AI</button>
+  <div id="aiA" class="result"></div>
+ </div>
+</aside>
+
+<main class="canvasWrap">
+ <div class="toolbar">
+  <button class="mode active" id="m2" onclick="setMode('2d')">2D</button>
+  <button class="mode" id="m3" onclick="setMode('3d')">3D</button>
+  <span class="small">در 2D: قطعه را انتخاب و جابه‌جا کنید؛ برای اتصال، ابزار سیم‌کشی را بزنید.</span>
+ </div>
+ <div id="stage">
+  <div id="v2" class="view"><svg id="svg2d" viewBox="0 0 900 650"></svg></div>
+  <div id="v3" class="view hidden"><div id="three"></div></div>
+  <div class="status" id="status">آماده</div>
+ </div>
+</main>
+
+<aside class="panel right">
+ <div class="info" style="text-align:center"><b style="font-size:18px;color:#61d9ff">🧮 محاسبات زیورا</b><br><span class="small">مقاومت رنگی • قانون اهم • توان</span></div>
+ <div class="group"><h3>مشخصات قطعه</h3><div id="props" class="info">یک قطعه را انتخاب کنید.</div></div>
+ <div class="group"><h3>محاسبه‌گر ولتاژ / جریان / توان</h3>
+  <label>ولتاژ (V)</label><input id="v" type=number value=12>
+  <label>مقاومت (Ω)</label><input id="r" type=number value=100>
+  <button class="calc" onclick="calcOhm()">محاسبه</button>
+  <div id="ohm" class="result"></div>
+ </div>
+ <div class="group resistorCalc"><h3>🎨 ماشین حساب مقاومت</h3>
+  <label>تعداد نوار</label>
+  <select id="bandCount" onchange="setBandCount()">
+    <option value="4">۴ نواری</option>
+    <option value="5">۵ نواری</option>
+    <option value="6">۶ نواری</option>
+  </select>
+  <div id="bandInputs" class="grid"></div>
+  <button class="calc" onclick="calcColor()">محاسبه مقاومت</button>
+  <div id="resistorVisual" class="resistorVisual"></div>
+  <div id="colorResult" class="result"></div>
+ </div>
+ <div class="group"><h3>سازندگان</h3><div class="info">سهیل هیبتیان<br>امیر حسین احسانی</div></div>
+</aside>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.min.js"></script>
+<script>
+let comps=[], selected=null, wire=false, wires=[], mode='2d', uid=0;
+const colors={مشکی:0,قهوه‌ای:1,قرمز:2,نارنجی:3,زرد:4,سبز:5,آبی:6,بنفش:7,خاکستری:8,سفید:9};
+const mult={مشکی:1,قهوه‌ای:10,قرمز:100,نارنجی:1000,زرد:1e4,سبز:1e5,آبی:1e6,بنفش:1e7,خاکستری:1e8,سفید:1e9};
+const tol={قهوه‌ای:.01,قرمز:.02,سبز:.005,آبی:.0025,بنفش:.001,خاکستری:.0005,طلایی:.05,نقره‌ای:.10};
+function enterApp(){intro.style.display='none';app.style.display='block';}
+function addComp(type){
+ const names={R:'مقاومت',C:'خازن',L:'سلف',D:'دیود',T:'ترانس',K:'رله',V:'منبع DC',G:'زمین'};
+ const def={R:'1 kΩ',C:'10 µF',L:'10 mH',D:'1N4148',T:'1:1',K:'12 V',V:'12 V',G:'0 V'};
+ const c={id:++uid,type,name:names[type],value:def[type],x:120+(uid%5)*130,y:100+Math.floor(uid/5)*120,rot:0};
+ comps.push(c);selected=c;render();showProps();
+}
+function render(){
+ svg2d.innerHTML='';
+ wires.forEach(w=>{let a=comps.find(c=>c.id==w.a),b=comps.find(c=>c.id==w.b);if(a&&b){let p=document.createElementNS('http://www.w3.org/2000/svg','line');p.setAttribute('x1',a.x);p.setAttribute('y1',a.y);p.setAttribute('x2',b.x);p.setAttribute('y2',b.y);p.setAttribute('class','wire');svg2d.appendChild(p)}});
+ comps.forEach(c=>{
+  let g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('transform',`translate(${c.x},${c.y}) rotate(${c.rot})`);g.dataset.id=c.id;
+  let rect=document.createElementNS('http://www.w3.org/2000/svg','rect');rect.setAttribute('x',-35);rect.setAttribute('y',-16);rect.setAttribute('width',70);rect.setAttribute('height',32);rect.setAttribute('rx',5);rect.setAttribute('class','compbody');g.appendChild(rect);
+  let t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',0);t.setAttribute('y',4);t.setAttribute('text-anchor','middle');t.setAttribute('class','text');t.textContent=c.type+'  '+c.value;g.appendChild(t);
+  [-45,45].forEach(x=>{let n=document.createElementNS('http://www.w3.org/2000/svg','circle');n.setAttribute('cx',x);n.setAttribute('cy',0);n.setAttribute('r',5);n.setAttribute('class','node');g.appendChild(n)});
+  g.addEventListener('mousedown',e=>{e.stopPropagation();selected=c;showProps();if(wire){let last=window.wireStart;if(last&&last!==c){wires.push({a:last.id,b:c.id});window.wireStart=null;wire=false;status.textContent='سیم متصل شد';render()}else{window.wireStart=c;status.textContent='پایه دوم را انتخاب کنید'}}});
+  g.addEventListener('dblclick',()=>{c.value=prompt('مقدار قطعه:',c.value)||c.value;showProps();render()});
+  svg2d.appendChild(g);
+ });
+}
+svg2d.addEventListener('mousedown',e=>{
+ if(e.target!==svg2d)return;
+ const r=svg2d.getBoundingClientRect(); if(selected){selected.x=Math.round((e.clientX-r.left)/25)*25;selected.y=Math.round((e.clientY-r.top)/25)*25;render()}
+});
+function showProps(){if(!selected){props.innerHTML='یک قطعه را انتخاب کنید.';return}
+ props.innerHTML=`<b>${selected.name}</b><br>نوع: ${selected.type}<br>مقدار: <input id="pv" value="${selected.value}" onchange="selected.value=this.value;render()">`;
+}
+function rotateSelected(){if(selected){selected.rot=(selected.rot+90)%360;render()}}
+function deleteSelected(){if(selected){comps=comps.filter(c=>c!==selected);wires=wires.filter(w=>w.a!==selected.id&&w.b!==selected.id);selected=null;render();showProps()}}
+function wireMode(){wire=!wire;window.wireStart=null;status.textContent=wire?'پایه اول را انتخاب کنید':'سیم‌کشی خاموش شد'}
+function calcOhm(){let V=+v.value,R=+r.value;if(R<=0)return;let I=V/R,P=V*I;ohm.innerHTML=`جریان: <b>${I.toFixed(4)} A</b><br>توان: <b>${P.toFixed(4)} W</b><br>ولتاژ: <b>${V} V</b>`}
+
+function openHub(kind){
+ const c=document.getElementById('hubContent');
+ if(kind==='calc'){
+  c.innerHTML=`<h2>🧮 مرکز محاسبات زیورا</h2>
+  <div class="hubgrid">
+   <div class="hubcard"><b>قانون اهم</b><div>ولتاژ، جریان و مقاومت را وارد کنید.</div><div class="formula">V = I × R</div></div>
+   <div class="hubcard"><b>توان الکتریکی</b><div>توان مصرفی مدار را محاسبه کنید.</div><div class="formula">P = V × I</div></div>
+   <div class="hubcard"><b>مقاومت سری</b><div>مقاومت‌های سری با هم جمع می‌شوند.</div><div class="formula">Rtotal = R1 + R2 + ...</div></div>
+   <div class="hubcard"><b>مقاومت موازی</b><div>برای شاخه‌های موازی، معادل مقاومت محاسبه می‌شود.</div><div class="formula">1/Rtotal = 1/R1 + 1/R2 + ...</div></div><div class="hubcard"><b>🎨 ماشین حساب رنگ مقاومت</b><div>۴، ۵ یا ۶ نوار را انتخاب کن؛ مقدار، تلرانس و محدوده را ببین.</div><div class="formula">R = digits × multiplier</div></div>
+  </div>`;
+ } else if(kind==='parts'){
+  c.innerHTML=`<h2>📚 مرجع قطعات زیورا</h2><div class="hubgrid">
+   <div class="hubcard"><b>مقاومت</b><br>واحد: Ω<br>برای محدودکردن جریان و تقسیم ولتاژ.</div>
+   <div class="hubcard"><b>خازن</b><br>واحد: F<br>ذخیره انرژی در میدان الکتریکی.</div>
+   <div class="hubcard"><b>سلف</b><br>واحد: H<br>ذخیره انرژی در میدان مغناطیسی.</div>
+   <div class="hubcard"><b>دیود</b><br>قطعه نیمه‌رسانا با رفتار یک‌طرفه.</div>
+   <div class="hubcard"><b>ترانسفورماتور</b><br>انتقال انرژی AC و تغییر نسبت ولتاژ.</div>
+   <div class="hubcard"><b>رله</b><br>کلید الکترومکانیکی برای کنترل مدار.</div>
+  </div>`;
+ } else {
+  c.innerHTML=`<h2>🎓 آموزش تعاملی زیورا</h2>
+   <div class="hubcard"><b>قانون اهم</b><br>با تغییر ولتاژ یا مقاومت، جریان مدار تغییر می‌کند.</div>
+   <div class="hubcard"><b>نکته مهندسی</b><br>قبل از اتصال قطعات، مقدار نامی و محدوده مجاز ولتاژ/جریان هر قطعه را بررسی کنید.</div>
+   <div class="hubcard"><b>راهنمای سریع</b><br>قطعه اضافه کن → مقدارش را تنظیم کن → پایه‌ها را سیم‌کشی کن → Run/Simulation را بزن.</div>`;
+ }
+ document.getElementById('hub').classList.remove('hidden');
+}
+function closeHub(){document.getElementById('hub').classList.add('hidden')}
+function fmt(x){
+ if(x>=1e9)return (x/1e9).toFixed(2)+' GΩ';
+ if(x>=1e6)return (x/1e6).toFixed(2)+' MΩ';
+ if(x>=1e3)return (x/1e3).toFixed(2)+' kΩ';
+ if(x<1)return (x*1000).toFixed(2)+' mΩ';
+ return Number(x.toFixed(3))+' Ω'
+}
+function bandOptions(select, allowGold=false){
+ select.innerHTML='';
+ for(let n in colors)select.add(new Option(n,n));
+ if(allowGold){select.add(new Option('طلایی','طلایی'));select.add(new Option('نقره‌ای','نقره‌ای'))}
+}
+function setBandCount(){
+ const n=+bandCount.value, box=bandInputs;
+ box.innerHTML='';
+ const labels=n===4?['نوار ۱','نوار ۲','ضریب','تلرانس']:n===5?['نوار ۱','نوار ۲','نوار ۳','ضریب','تلرانس']:['نوار ۱','نوار ۲','نوار ۳','ضریب','تلرانس','ضریب دما'];
+ labels.forEach((lab,i)=>{
+   const wrap=document.createElement('div');
+   const l=document.createElement('label');l.textContent=lab;wrap.appendChild(l);
+   const s=document.createElement('select');s.id='band'+i;wrap.appendChild(s);box.appendChild(wrap);
+   if((n===4&&i<2)||(n===5&&i<3)||(n===6&&i<3)) bandOptions(s);
+   else if(lab==='تلرانس') bandOptions(s,true);
+   else if(lab==='ضریب') {for(let x in mult)s.add(new Option(x,x))}
+   else {for(let x in mult)s.add(new Option(x,x))}
+ });
+ const defaults=n===4?['قهوه‌ای','مشکی','قهوه‌ای','طلایی']:
+   n===5?['قهوه‌ای','مشکی','مشکی','قهوه‌ای','طلایی']:
+   ['قهوه‌ای','مشکی','مشکی','قهوه‌ای','طلایی','مشکی'];
+ defaults.forEach((v,i)=>{const s=document.getElementById('band'+i);if(s)s.value=v});
+ calcColor();
+}
+function calcColor(){
+ const n=+bandCount.value;
+ let digits=[];
+ const digitCount=n===4?2:3;
+ for(let i=0;i<digitCount;i++)digits.push(colors[document.getElementById('band'+i).value]);
+ let base=digits.join('');
+ let R=Number(base)*mult[document.getElementById('band'+digitCount).value];
+ const tolSelect=document.getElementById('band'+(digitCount+1));
+ const t=tol[tolSelect.value] ?? 0.05;
+ const lo=R*(1-t),hi=R*(1+t);
+ const names=[];
+ for(let i=0;i<digitCount;i++)names.push(document.getElementById('band'+i).value);
+ names.push(document.getElementById('band'+digitCount).value);
+ names.push(tolSelect.value);
+ resistorVisual.innerHTML='<div class="resLead"></div><div class="resBody">'+
+   names.slice(0,digitCount).map(x=>'<span class="band" style="background:'+cssColor(x)+'"></span>').join('')+
+   '<span class="band" style="background:'+cssColor(names[digitCount])+'"></span>'+
+   '<span class="band" style="background:'+cssColor(names[digitCount+1])+'"></span>'+
+   '</div><div class="small">نوارهای انتخاب‌شده: '+names.join(' • ')+'</div>';
+ colorResult.innerHTML='<div class="calcResult">مقدار اسمی: <b>'+fmt(R)+'</b><br>تلرانس: <b>±'+(t*100)+'%</b><br>محدوده: <b>'+fmt(lo)+' تا '+fmt(hi)+'</b></div>';
+}
+function cssColor(name){
+ const map={'مشکی':'#111','قهوه‌ای':'#7b3f00','قرمز':'#d92525','نارنجی':'#ef7d22','زرد':'#e0bd21','سبز':'#279447','آبی':'#287bd5','بنفش':'#7b43a8','خاکستری':'#8a8f95','سفید':'#f2f2f2','طلایی':'#c9a227','نقره‌ای':'#b9bec5'};
+ return map[name]||'#d9b47a';
+}
+function fillColors(){setBandCount()}
+function askAI(){let q=aiQ.value.toLowerCase();let a='';if(q.includes('اهم')||q.includes('ohm'))a='قانون اهم رابطه بین ولتاژ، جریان و مقاومت است. برای مدار مقاومتی، I=V/R.';else if(q.includes('توان'))a='توان الکتریکی در مدار مقاومتی را می‌توان از P=VI محاسبه کرد.';else if(q.includes('خازن'))a='خازن انرژی را در میدان الکتریکی ذخیره می‌کند؛ ظرفیت آن با فاراد بیان می‌شود.';else if(q.includes('سلف'))a='سلف انرژی را در میدان مغناطیسی ذخیره می‌کند و مقدار آن با هنری بیان می‌شود.';else a='زیورا AI: سؤال را درباره قانون اهم، توان، مقاومت، خازن، سلف یا دیود دقیق‌تر بنویس.';aiA.textContent=a}
+function saveProject(){localStorage.setItem('zivoraProject',JSON.stringify({comps,wires}));status.textContent='پروژه ذخیره شد'}
+function loadProject(){let x=localStorage.getItem('zivoraProject');if(!x){status.textContent='پروژه‌ای ذخیره نشده';return}let d=JSON.parse(x);comps=d.comps||[];wires=d.wires||[];selected=null;render();status.textContent='پروژه باز شد'}
+function clearStage(){comps=[];wires=[];selected=null;render();showProps()}
+function setMode(m){mode=m;m2.classList.toggle('active',m==='2d');m3.classList.toggle('active',m==='3d');v2.classList.toggle('hidden',m!=='2d');v3.classList.toggle('hidden',m!=='3d');if(m==='3d')init3D()}
+let scene,camera,renderer,anim;
+function init3D(){
+ if(renderer){renderer.setSize(three.clientWidth,three.clientHeight);return}
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x081421);
+ camera=new THREE.PerspectiveCamera(55,three.clientWidth/three.clientHeight,.1,1000);camera.position.set(0,5,9);
+ renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(three.clientWidth,three.clientHeight);three.appendChild(renderer.domElement);
+ const light=new THREE.HemisphereLight(0xffffff,0x223344,2);scene.add(light);
+ const grid=new THREE.GridHelper(14,14);scene.add(grid);
+ comps.forEach((c,i)=>{let geo=new THREE.BoxGeometry(1.6,.35,.5),mat=new THREE.MeshStandardMaterial({color:0xd6b56b});let m=new THREE.Mesh(geo,mat);m.position.set((c.x-450)/80,0.3,(c.y-325)/80);m.rotation.y=THREE.MathUtils.degToRad(c.rot);scene.add(m)});
+ animate();
+}
+function animate(){requestAnimationFrame(animate);if(!renderer)return;renderer.render(scene,camera)}
+function runSim(){calcOhm();status.textContent='محاسبه DC اجرا شد؛ برای شبیه‌سازی SPICE کامل، مدل و موتور مدار لازم است.'}
+fillColors();render();
+</script>
+</body>
+</html>
